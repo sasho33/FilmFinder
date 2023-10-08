@@ -31,18 +31,6 @@ const clearCurrentMovie = () => {
   movieTextDiv.innerHTML = '';
 };
 
-// After liking a movie, clears the current movie from the screen and gets another random movie
-const likeMovie = () => {
-  clearCurrentMovie();
-  showRandomMovie();
-};
-
-// After disliking a movie, clears the current movie from the screen and gets another random movie
-const dislikeMovie = () => {
-  clearCurrentMovie();
-  showRandomMovie();
-};
-
 // Create HTML for movie poster
 const createMoviePoster = (posterPath) => {
   const moviePosterUrl = `https://image.tmdb.org/t/p/original/${posterPath}`;

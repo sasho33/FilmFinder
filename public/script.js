@@ -66,14 +66,14 @@ const getMovieInfo = async (movie) => {
     console.log('Failed to fetch movie list: ' + e.message);
   }
 };
-
+let movies;
 // Gets a list of movies and ultimately displays the info of a random movie from the list
 const showRandomMovie = async () => {
   const movieInfo = document.getElementById('movieInfo');
   if (movieInfo.childNodes.length > 0) {
     clearCurrentMovie();
   }
-  const movies = await getMovies();
+  movies = await getMovies();
   const randomMovie = getRandomMovie(movies);
   const info = await getMovieInfo(randomMovie);
   displayMovie(info);
@@ -81,3 +81,53 @@ const showRandomMovie = async () => {
 
 getGenres().then(populateGenreDropdown);
 playBtn.onclick = showRandomMovie;
+
+// Initialize the liked and disliked movie arrays
+let likedMovies = JSON.parse(localStorage.getItem('likedMovies')) || [];
+let dislikedMovies = JSON.parse(localStorage.getItem('dislikedMovies')) || [];
+
+// Function to add a movie to the liked movies list
+const likeMovie = () => {
+  const currentMovie = getRandomMovie(movies);
+  likedMovies.push(currentMovie);
+  localStorage.setItem('likedMovies', JSON.stringify(likedMovies));
+  displayLikedMovies();
+  clearCurrentMovie();
+  showRandomMovie();
+};
+
+// Function to add a movie to the disliked movies list
+const dislikeMovie = () => {
+  const currentMovie = getRandomMovie(movies);
+  dislikedMovies.push(currentMovie);
+  localStorage.setItem('dislikedMovies', JSON.stringify(dislikedMovies));
+  displayDislikedMovies();
+  clearCurrentMovie();
+  showRandomMovie();
+};
+
+// Display liked movies in the 'likedMoviesContainer'
+const displayLikedMovies = () => {
+  const likedMoviesContainer = document.getElementById('likedMoviesContainer');
+  likedMoviesContainer.innerHTML = ''; // Clear previous content
+
+  likedMovies.forEach((movie) => {
+    const movieElement = document.createElement('div');
+    movieElement.textContent = movie.title;
+    likedMoviesContainer.appendChild(movieElement);
+  });
+};
+
+// Display disliked movies in the 'dislikedMoviesContainer'
+const displayDislikedMovies = () => {
+  const dislikedMoviesContainer = document.getElementById('dislikedMoviesContainer');
+  dislikedMoviesContainer.innerHTML = ''; // Clear previous content
+
+  dislikedMovies.forEach((movie) => {
+    const movieElement = document.createElement('div');
+    movieElement.textContent = movie.title;
+    dislikedMoviesContainer.appendChild(movieElement);
+  });
+};
+
+// Call these functions to populate the containers
