@@ -24,6 +24,10 @@ const getGenres = async () => {
 
 const getMovies = async () => {
   const selectedGenre = getSelectedGenre();
+  if (!selectedGenre) {
+    console.log('No genre selected.');
+    return;
+  }
   const discoveredMovieEndpoint = '/discover/movie';
   console.log(selectedGenre);
   const requestParams = `?api_key=${tmdbKey}&with_genres=${selectedGenre}`;
@@ -33,7 +37,8 @@ const getMovies = async () => {
     const response = await fetch(urlToFetch);
     if (response.ok) {
       const jsonResponse = await response.json();
-      console.log(jsonResponse);
+      const movies = jsonResponse.results;
+      return movies;
     } else {
       throw new Error('Failed to fetch movie list!');
     }
@@ -42,16 +47,36 @@ const getMovies = async () => {
   }
 };
 
-getMovies();
+const getMovieInfo = async (movie) => {
+  const movieId = movie.id;
+  const movieEndPoint = `/movie/${movieId}`;
+  const requestParams = `?api_key=${tmdbKey}`;
+  const urlToFetch = `${tmdbBaseUrl}${movieEndPoint}${requestParams}`;
 
-const getMovieInfo = () => {};
+  try {
+    const response = await fetch(urlToFetch);
+    if (response.ok) {
+      const movieInfo = await response.json();
+      console.log('movie info: ' + movieInfo);
+      return movieInfo;
+    } else {
+      throw new Error('Failed to fetch movie list!');
+    }
+  } catch (e) {
+    console.log('Failed to fetch movie list: ' + e.message);
+  }
+};
 
 // Gets a list of movies and ultimately displays the info of a random movie from the list
-const showRandomMovie = () => {
+const showRandomMovie = async () => {
   const movieInfo = document.getElementById('movieInfo');
   if (movieInfo.childNodes.length > 0) {
     clearCurrentMovie();
   }
+  const movies = await getMovies();
+  const randomMovie = getRandomMovie(movies);
+  const info = await getMovieInfo(randomMovie);
+  displayMovie(info);
 };
 
 getGenres().then(populateGenreDropdown);
