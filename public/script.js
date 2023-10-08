@@ -28,11 +28,16 @@ const getMovies = async () => {
     console.log('No genre selected.');
     return;
   }
+
+  // Generate a random page number between 1 and a maximum page number
+  const maxPage = 10;
+  const randomPage = Math.floor(Math.random() * maxPage) + 1;
+
   const discoveredMovieEndpoint = '/discover/movie';
-  console.log(selectedGenre);
-  const requestParams = `?api_key=${tmdbKey}&with_genres=${selectedGenre}`;
+  const requestParams = `?api_key=${tmdbKey}&with_genres=${selectedGenre}&page=${randomPage}`;
+
   const urlToFetch = `${tmdbBaseUrl}${discoveredMovieEndpoint}${requestParams}`;
-  console.log(urlToFetch);
+
   try {
     const response = await fetch(urlToFetch);
     if (response.ok) {
