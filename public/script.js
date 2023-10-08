@@ -10,15 +10,39 @@ const getGenres = async () => {
     const response = await fetch(urlToFetch);
     if (response.ok) {
       const jsonResponse = await response.json();
+      console.log(jsonResponse);
+      const genres = jsonResponse.genres;
+      console.log(genres);
+      return genres;
+    } else {
+      throw new Error('Failed to fetch genres!');
     }
   } catch (e) {
     console.log('Failed to fetch genre: ' + e.message);
   }
 };
 
-const getMovies = () => {
+const getMovies = async () => {
   const selectedGenre = getSelectedGenre();
+  const discoveredMovieEndpoint = '/discover/movie';
+  console.log(selectedGenre);
+  const requestParams = `?api_key=${tmdbKey}&with_genres=${selectedGenre}`;
+  const urlToFetch = `${tmdbBaseUrl}${discoveredMovieEndpoint}${requestParams}`;
+  console.log(urlToFetch);
+  try {
+    const response = await fetch(urlToFetch);
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      console.log(jsonResponse);
+    } else {
+      throw new Error('Failed to fetch movie list!');
+    }
+  } catch (e) {
+    console.log('Failed to fetch movie list: ' + e.message);
+  }
 };
+
+getMovies();
 
 const getMovieInfo = () => {};
 
